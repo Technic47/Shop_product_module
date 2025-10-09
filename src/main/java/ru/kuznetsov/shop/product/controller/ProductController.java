@@ -15,7 +15,7 @@ import static ru.kuznetsov.shop.data.common.KafkaTopics.PRODUCT_SAVE_TOPIC;
 @RestController
 @RequestMapping("/product")
 @RequiredArgsConstructor
-public class StockController {
+public class ProductController {
 
     private final ProductService productService;
     private final KafkaService kafkaService;

@@ -1,6 +1,6 @@
 spring:
   application:
-    name: Stock_module
+    name: Product_module
 
   datasource:
     driver-class-name: org.postgresql.Driver
