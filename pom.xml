@@ -3,9 +3,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>ru.kuznetsov.shop</groupId>
+        <groupId>io.github.technic47</groupId>
         <artifactId>shop-spring-boot-starter</artifactId>
-        <version>1.0.0</version>
+        <version>1.0.1</version>
     </parent>
     <artifactId>Product_module</artifactId>
     <version>1.0.0</version>
@@ -32,7 +32,7 @@
         </dependency>
 
         <dependency>
-            <groupId>ru.kuznetsov.shop</groupId>
+            <groupId>io.github.technic47</groupId>
             <artifactId>data-model</artifactId>
             <version>${data-model-version}</version>
         </dependency>
