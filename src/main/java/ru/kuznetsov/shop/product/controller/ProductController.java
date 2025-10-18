@@ -3,14 +3,18 @@ package ru.kuznetsov.shop.product.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.kuznetsov.shop.data.service.KafkaService;
 import ru.kuznetsov.shop.data.service.ProductService;
-import ru.kuznetsov.shop.product.service.KafkaService;
 import ru.kuznetsov.shop.represent.dto.ProductDto;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
-import static ru.kuznetsov.shop.data.common.KafkaTopics.PRODUCT_SAVE_TOPIC;
+import static ru.kuznetsov.shop.represent.common.KafkaConst.OPERATION_ID_HEADER;
+import static ru.kuznetsov.shop.represent.common.KafkaConst.PRODUCT_SAVE_TOPIC;
+
 
 @RestController
 @RequestMapping("/product")
@@ -31,15 +35,22 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<Boolean> create(@RequestBody ProductDto storeDto) {
-        return ResponseEntity.ok(kafkaService.sendSaveMessage(storeDto, PRODUCT_SAVE_TOPIC));
+    public ResponseEntity<Boolean> create(@RequestBody ProductDto productDto) {
+        return ResponseEntity.ok(kafkaService.sendMessageWithEntity(
+                productDto,
+                PRODUCT_SAVE_TOPIC,
+                Collections.singletonMap(OPERATION_ID_HEADER, UUID.randomUUID().toString().getBytes())));
     }
 
     @PostMapping("/batch")
-    public ResponseEntity<Collection<Boolean>> createBatch(@RequestBody Collection<ProductDto> storeDto) {
+    public ResponseEntity<Collection<Boolean>> createBatch(@RequestBody Collection<ProductDto> productDtoCollection) {
+        byte[] operationId = UUID.randomUUID().toString().getBytes();
+
         return ResponseEntity.ok(
-                storeDto.stream()
-                        .map(dto -> kafkaService.sendSaveMessage(dto, PRODUCT_SAVE_TOPIC))
+                productDtoCollection.stream()
+                        .map(dto -> kafkaService.sendMessageWithEntity(dto,
+                                PRODUCT_SAVE_TOPIC,
+                                Collections.singletonMap(OPERATION_ID_HEADER, operationId)))
                         .toList()
         );
     }
