@@ -3,9 +3,9 @@ package ru.kuznetsov.shop.product.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.kuznetsov.shop.data.dto.ProductDto;
 import ru.kuznetsov.shop.data.service.ProductService;
 import ru.kuznetsov.shop.product.service.KafkaService;
+import ru.kuznetsov.shop.represent.dto.ProductDto;
 
 import java.util.Collection;
 import java.util.List;

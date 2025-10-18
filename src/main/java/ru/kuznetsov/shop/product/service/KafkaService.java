@@ -7,7 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
-import ru.kuznetsov.shop.data.dto.AbstractDto;
+import ru.kuznetsov.shop.represent.dto.AbstractDto;
 
 @Service
 @RequiredArgsConstructor
