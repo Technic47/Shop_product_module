@@ -1,6 +1,8 @@
 package ru.kuznetsov.shop.product.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.kuznetsov.shop.data.service.KafkaService;
@@ -24,6 +26,8 @@ public class ProductController {
     private final ProductService productService;
     private final KafkaService kafkaService;
 
+    Logger logger = LoggerFactory.getLogger(ProductController.class);
+
     @GetMapping("/{id}")
     public ResponseEntity<ProductDto> getById(@PathVariable Long id) {
         return ResponseEntity.ok(productService.findById(id));
@@ -35,28 +39,38 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<Boolean> create(@RequestBody ProductDto productDto) {
-        return ResponseEntity.ok(kafkaService.sendMessageWithEntity(
-                productDto,
-                PRODUCT_SAVE_TOPIC,
-                Collections.singletonMap(OPERATION_ID_HEADER, UUID.randomUUID().toString().getBytes())));
+    public ResponseEntity<String> create(@RequestBody ProductDto productDto) {
+        String uuidString = UUID.randomUUID().toString();
+
+        sendMessageToKafka(productDto, uuidString);
+
+        return ResponseEntity.ok(uuidString);
     }
 
     @PostMapping("/batch")
-    public ResponseEntity<Collection<Boolean>> createBatch(@RequestBody Collection<ProductDto> productDtoCollection) {
-        byte[] operationId = UUID.randomUUID().toString().getBytes();
+    public ResponseEntity<String> createBatch(@RequestBody Collection<ProductDto> productDtoCollection) {
+        String uuidString = UUID.randomUUID().toString();
 
-        return ResponseEntity.ok(
-                productDtoCollection.stream()
-                        .map(dto -> kafkaService.sendMessageWithEntity(dto,
-                                PRODUCT_SAVE_TOPIC,
-                                Collections.singletonMap(OPERATION_ID_HEADER, operationId)))
-                        .toList()
-        );
+        for (ProductDto productDto : productDtoCollection) {
+            sendMessageToKafka(productDto, uuidString);
+        }
+
+        return ResponseEntity.ok(uuidString);
     }
 
     @DeleteMapping("/{id}")
     public void deleteeStore(@PathVariable Long id) {
         productService.deleteById(id);
+    }
+
+    private void sendMessageToKafka(ProductDto productDto, String uuidString) {
+        boolean sendResult = kafkaService.sendMessageWithEntity(
+                productDto,
+                PRODUCT_SAVE_TOPIC,
+                Collections.singletonMap(OPERATION_ID_HEADER, uuidString.getBytes()));
+
+        if (!sendResult) {
+            logger.warn("Failed to send product to topic. Product: {} operation id {}", productDto, uuidString);
+        }
     }
 }
