@@ -6,7 +6,7 @@
     <parent>
         <groupId>io.github.technic47</groupId>
         <artifactId>shop-spring-boot-starter</artifactId>
-        <version>1.0.6</version>
+        <version>1.0.10</version>
     </parent>
 
     <artifactId>Product_module</artifactId>
@@ -21,10 +21,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.kafka</groupId>
-            <artifactId>spring-kafka</artifactId>
         </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>
