@@ -39,7 +39,7 @@ public class ProductController {
             @RequestParam(value = "categoryId", required = false) Long categoryId
             ) {
         if (ownerId != null && !ownerId.isEmpty()) {
-            return ResponseEntity.ok(productService.findAllByOwnerAndCategoryId(UUID.fromString(ownerId), categoryId));
+            return ResponseEntity.ok(productService.findAllByOwnerOrCategoryId(UUID.fromString(ownerId), categoryId));
         } else return ResponseEntity.ok(productService.findAll());
     }
 
