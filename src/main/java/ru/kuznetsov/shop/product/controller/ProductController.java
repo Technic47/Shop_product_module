@@ -34,9 +34,12 @@ public class ProductController {
     }
 
     @GetMapping()
-    public ResponseEntity<List<ProductDto>> getAll(@RequestParam("ownerId") String ownerId) {
+    public ResponseEntity<List<ProductDto>> getAll(
+            @RequestParam("ownerId") String ownerId,
+            @RequestParam(value = "categoryId", required = false) Long categoryId
+            ) {
         if (ownerId != null && !ownerId.isEmpty()) {
-            return ResponseEntity.ok(productService.findAllByOwnerId(UUID.fromString(ownerId)));
+            return ResponseEntity.ok(productService.findAllByOwnerAndCategoryId(UUID.fromString(ownerId), categoryId));
         } else return ResponseEntity.ok(productService.findAll());
     }
 
