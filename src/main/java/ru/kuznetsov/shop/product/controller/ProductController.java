@@ -35,7 +35,7 @@ public class ProductController {
 
     @GetMapping()
     public ResponseEntity<List<ProductDto>> getAll(
-            @RequestParam("ownerId") String ownerId,
+            @RequestParam(value = "ownerId",required = false) String ownerId,
             @RequestParam(value = "categoryId", required = false) Long categoryId
             ) {
         if (ownerId != null && !ownerId.isEmpty()) {
