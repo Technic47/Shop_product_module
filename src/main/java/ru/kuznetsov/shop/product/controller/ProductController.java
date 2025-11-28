@@ -3,10 +3,14 @@ package ru.kuznetsov.shop.product.controller;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.kuznetsov.shop.data.service.KafkaService;
+import ru.kuznetsov.shop.data.service.ProductPagingAndSortingService;
 import ru.kuznetsov.shop.data.service.ProductService;
+import ru.kuznetsov.shop.represent.dto.ProductCardDto;
 import ru.kuznetsov.shop.represent.dto.ProductDto;
 
 import java.util.Collection;
@@ -24,6 +28,7 @@ import static ru.kuznetsov.shop.represent.common.KafkaConst.PRODUCT_SAVE_TOPIC;
 public class ProductController {
 
     private final ProductService productService;
+    private final ProductPagingAndSortingService pagingAndSortingService;
     private final KafkaService kafkaService;
 
     Logger logger = LoggerFactory.getLogger(ProductController.class);
@@ -35,12 +40,39 @@ public class ProductController {
 
     @GetMapping()
     public ResponseEntity<List<ProductDto>> getAll(
-            @RequestParam(value = "ownerId",required = false) String ownerId,
+            @RequestParam(value = "ownerId", required = false) String ownerId,
             @RequestParam(value = "categoryId", required = false) Long categoryId
-            ) {
+    ) {
         if (ownerId != null && !ownerId.isEmpty()) {
             return ResponseEntity.ok(productService.findAllByOwnerOrCategoryId(UUID.fromString(ownerId), categoryId));
         } else return ResponseEntity.ok(productService.findAll());
+    }
+
+    @GetMapping("/card")
+    public ResponseEntity<Collection<ProductCardDto>> getAllCard(
+            @RequestParam(required = false) Long categoryId,
+            @RequestParam(required = false) String ownerId
+    ) {
+        return ResponseEntity.ok(pagingAndSortingService.findAllByCategoryOrOwnerId(
+                ownerId == null ? null : UUID.fromString(ownerId),
+                categoryId
+        ));
+    }
+
+    @GetMapping("/card/page")
+    public ResponseEntity<Page<ProductCardDto>> getAllCardPageable(
+            @RequestParam Pageable pageable,
+            @RequestParam(required = false) Long categoryId,
+            @RequestParam(required = false) String ownerId
+    ) {
+        if (categoryId != null || ownerId != null) {
+            return ResponseEntity.ok(pagingAndSortingService.findAllByCategoryOrOwnerIdPageable(
+                    ownerId == null ? null : UUID.fromString(ownerId),
+                    categoryId,
+                    pageable
+            ));
+        } else
+            return ResponseEntity.ok(pagingAndSortingService.findAllPageable(pageable));
     }
 
     @PostMapping
