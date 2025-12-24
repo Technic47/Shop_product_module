@@ -9,9 +9,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.kuznetsov.shop.data.service.KafkaService;
 import ru.kuznetsov.shop.data.service.ProductPagingAndSortingService;
 import ru.kuznetsov.shop.data.service.ProductService;
+import ru.kuznetsov.shop.kafka.service.KafkaService;
 import ru.kuznetsov.shop.represent.dto.ProductCardDto;
 import ru.kuznetsov.shop.represent.dto.ProductDto;
 
