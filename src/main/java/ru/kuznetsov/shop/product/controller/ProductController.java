@@ -3,12 +3,12 @@ package ru.kuznetsov.shop.product.controller;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.kuznetsov.shop.data.model.util.RestPage;
 import ru.kuznetsov.shop.data.service.ProductPagingAndSortingService;
 import ru.kuznetsov.shop.data.service.ProductService;
 import ru.kuznetsov.shop.kafka.service.KafkaService;
@@ -64,7 +64,7 @@ public class ProductController {
     }
 
     @GetMapping("/card/page")
-    public ResponseEntity<Page<ProductCardDto>> getAllCardPageable(
+    public ResponseEntity<RestPage<ProductCardDto>> getAllCardPageable(
             @RequestParam Integer pageNumber,
             @RequestParam(required = false) Integer pageSize,
             @RequestParam(required = false) String order,
