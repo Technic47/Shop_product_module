@@ -12,6 +12,7 @@ import ru.kuznetsov.shop.data.model.util.RestPage;
 import ru.kuznetsov.shop.data.service.ProductPagingAndSortingService;
 import ru.kuznetsov.shop.data.service.ProductService;
 import ru.kuznetsov.shop.kafka.service.KafkaService;
+import ru.kuznetsov.shop.product.api.ProductControllerApi;
 import ru.kuznetsov.shop.represent.dto.ProductCardDto;
 import ru.kuznetsov.shop.represent.dto.ProductDto;
 
@@ -27,7 +28,7 @@ import static ru.kuznetsov.shop.represent.common.KafkaConst.PRODUCT_SAVE_TOPIC;
 @RestController
 @RequestMapping("/product")
 @RequiredArgsConstructor
-public class ProductController {
+public class ProductController implements ProductControllerApi {
 
     private static final Integer DEFAULT_PAGE_SIZE = 10;
 
