@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+import static org.springframework.http.HttpStatus.NO_CONTENT;
 import static ru.kuznetsov.shop.represent.common.KafkaConst.OPERATION_ID_HEADER;
 import static ru.kuznetsov.shop.represent.common.KafkaConst.PRODUCT_SAVE_TOPIC;
 
@@ -40,7 +41,10 @@ public class ProductController implements ProductControllerApi {
 
     @GetMapping("/{id}")
     public ResponseEntity<ProductDto> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(productService.findById(id));
+        ProductDto byId = productService.findById(id);
+        return byId == null ?
+                ResponseEntity.status(NO_CONTENT).build()
+                : ResponseEntity.ok(byId);
     }
 
     @GetMapping()
@@ -48,9 +52,14 @@ public class ProductController implements ProductControllerApi {
             @RequestParam(value = "ownerId", required = false) String ownerId,
             @RequestParam(value = "categoryId", required = false) Long categoryId
     ) {
+        List<ProductDto> result;
         if (ownerId != null && !ownerId.isEmpty()) {
-            return ResponseEntity.ok(productService.findAllByOwnerOrCategoryId(UUID.fromString(ownerId), categoryId));
-        } else return ResponseEntity.ok(productService.findAll());
+            result = productService.findAllByOwnerOrCategoryId(UUID.fromString(ownerId), categoryId);
+        } else result = productService.findAll();
+
+        return result.isEmpty() ?
+                ResponseEntity.status(NO_CONTENT).build()
+                : ResponseEntity.ok(result);
     }
 
     @GetMapping("/card")
@@ -58,10 +67,14 @@ public class ProductController implements ProductControllerApi {
             @RequestParam(required = false) Long categoryId,
             @RequestParam(required = false) String ownerId
     ) {
-        return ResponseEntity.ok(pagingAndSortingService.findAllByCategoryOrOwnerId(
+        Collection<ProductCardDto> result = pagingAndSortingService.findAllByCategoryOrOwnerId(
                 ownerId == null ? null : UUID.fromString(ownerId),
                 categoryId
-        ));
+        );
+
+        return result.isEmpty() ?
+                ResponseEntity.status(NO_CONTENT).build()
+                : ResponseEntity.ok(result);
     }
 
     @GetMapping("/card/page")
